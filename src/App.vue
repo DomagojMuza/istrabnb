@@ -22,7 +22,7 @@ import Navbar from "@/components/Navbar.vue";
 }
 
 .comp-navbar{
-  height: 4vh;
+  min-height: 4vh;
   position: absolute;
   left: 0;
   right: 0;
@@ -39,19 +39,27 @@ import Navbar from "@/components/Navbar.vue";
   color:aliceblue !important;
 }
 
-@media only screen and (max-width: 1024px) {
-  .comp-navbar{
-    height: auto !important;
-    padding: 1vh !important;
-  }
-}
-
 .wrapper{
   min-height: 100vh;
 }
+@media only screen and (max-width: 1024px) {
+  .comp-navbar{
+    position: inherit;
+    min-height: 2vh !important;
+    padding: 1vh !important;
+  }
+
+  .wrapper{
+  min-height: 96vh;
+}
+}
+
+.navbar-toggler{
+  background-color: black;
+}
 
 .grad{
-  background-image: linear-gradient(45deg, #ff0084, #33001b);
+  background-image: linear-gradient(90deg, #ff0084, #33001b);
 }
 
 .router-link-active, .router-link-exact-active{
