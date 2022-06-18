@@ -1,6 +1,6 @@
 <template>
-    <div class="d-flex justify-content-center align-items-center">
-    <form class="shadow py-3 px-5 border border-0 rounded-3 bg-light">
+    <div class="d-flex justify-content-center align-items-center" style="height: 100vh !important;">
+    <form class="shadow py-3 px-5 border border-0 rounded-3 bg-light" style="margin-top: 100px;">
       <div class="text-center mb-5">
         <p class="h4">Log in</p>
       </div>
@@ -26,4 +26,6 @@
       </div>
     </form>
     </div>
+
+    
 </template>

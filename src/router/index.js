@@ -24,6 +24,26 @@ const router = createRouter({
       name: "register",
       component: () => import("../views/auth/Register.vue"),
     },
+    {
+      path: "/add",
+      name: "add",
+      component: () => import("../views/objects/Add.vue"),
+    },
+    {
+      path:'/accommodation/:_id',
+      name : 'object-details',
+      component: () => import("../views/details/details.vue"),
+    },
+    {
+      path:'/my',
+      name : 'my-objects',
+      component: () => import("../views/Edit_list.vue"),
+    },
+    {
+      path:'/my_object/:_id',
+      name : 'my-object',
+      component: () => import("../views/Object_edit.vue"),
+    },
   ],
 });
 
