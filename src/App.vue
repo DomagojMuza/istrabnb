@@ -11,6 +11,28 @@ import Navbar from "@/components/Navbar.vue";
 
 </template>
 
+<script>
+import { tokenValidation } from '@/middleware/axios.js'
+
+export default {
+  async created()
+  {
+    try {
+      this.$store.token = localStorage.getItem('token') ?? '';
+      if (this.$store.token)
+      {
+        let valid = await tokenValidation(this.$store.token);
+        if (! valid.data) {
+          localStorage.removeItem('token');
+          this.$store.token = null;
+        }
+      }
+    } catch (error) {
+    }
+  }
+}
+</script>
+
 <style>
 @import "@/assets/base.css";
 
@@ -48,6 +70,7 @@ import Navbar from "@/components/Navbar.vue";
 } */
 
 
+
 @media only screen and (max-width: 1024px) {
 
 }
@@ -56,9 +79,12 @@ import Navbar from "@/components/Navbar.vue";
   background-color: black;
 }
 
-
+.pointer {
+  cursor: pointer ;
+}
 /* .router-link-active, .router-link-exact-active{
   color: whitesmoke !important;
 } */
+
 
 </style>

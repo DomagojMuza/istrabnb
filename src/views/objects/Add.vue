@@ -56,7 +56,8 @@
           <input type="file" @change="uploadFile" ref="file" multiple>
         </div>
 
-        <div class="col-12" style="height: 400px;" >
+        <div id="emailHelp" class="form-text mb-1 mt-4">Drag marker to position location</div>
+        <div class="col-12 mt-0" style="min-height: 400px;" >
           <GMapMap :center="center" :zoom="9" map-type-id="terrain" ref="map" class="h-100">
             <GMapMarker :position="center" :draggable="true" @dragend="coordinates($event.latLng)">
 
@@ -65,9 +66,8 @@
         </div>
       </div>
 
-
       <!-- Submit button -->
-      <button @click.prevent="submitFile">Submit</button>
+      <button class="btn btn-primary mt-3" @click.prevent="submitFile">Submit</button>
 
     </form>
     </div>
@@ -81,6 +81,7 @@ import { images, add_object } from '@/middleware/axios.js'
       return {
         center: { lat: 45.1917883, lng: 13.9255512 },
         images: null,
+        modalShown: false,
         object: {
           name:     null,
           price:    null,
@@ -105,19 +106,21 @@ import { images, add_object } from '@/middleware/axios.js'
       },
       async submitFile() {
        try {
+        console.log("submit");
+        console.log(this.images);
           let add_o = await add_object(this.object)
-
-          if (add_o.data._id && this.images.length)
+          if (add_o.data._id && this.images)
           {
             const formData = new FormData();
             for (const i of Object.keys(this.images)) {
               formData.append('images', this.images[i])
             }
             formData.append('object_id', add_o.data._id)
-            let a = await images(formData);
+            await images(formData);
           }
        } catch (error) {
-         console.log(error);
+          console.log(error);
+          alert(error.data.message)
        }
       }
     }

@@ -7,18 +7,18 @@
 
       <!-- Email input -->
       <div class="form-outline mb-4">
-        <input type="email" id="loginName" class="form-control" />
+        <input v-model="body.email" type="email" id="loginName" class="form-control" />
         <label class="form-label" for="loginName">Email or username</label>
       </div>
 
       <!-- Password input -->
       <div class="form-outline mb-4">
-        <input type="password" id="loginPassword" class="form-control" />
+        <input v-model="body.password" type="password" id="loginPassword" class="form-control" />
         <label class="form-label" for="loginPassword">Password</label>
       </div>
 
       <!-- Submit button -->
-      <button type="submit" class="btn btn-primary btn-block mb-4">Sign in</button>
+      <button type="button" @click.prevent="logIn" class="btn btn-primary btn-block mb-4">Sign in</button>
 
       <!-- Register buttons -->
       <div class="text-center">
@@ -29,3 +29,31 @@
 
     
 </template>
+
+<script>
+import { login } from '@/middleware/axios.js'
+export default {
+  data() {
+    return {
+      body: {
+        email: 'a@a.com',
+        password: '12345678'
+      }
+    }
+  },
+  methods: {
+    async logIn() 
+    {
+      try {
+        let response = await login(this.body)
+        console.log(response.data);
+        this.$store.token = response.data.token;
+        localStorage.setItem('token', this.$store.token)
+        this.$router.go({ path: '/' });
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }
+}
+</script>

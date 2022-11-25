@@ -7,22 +7,22 @@
 
       <!-- Email input -->
       <div class="form-outline mb-4">
-        <input type="email" id="loginName" class="form-control" />
+        <input v-model="body.email" type="email" id="loginName" class="form-control" />
         <label class="form-label" for="loginName">Email or username</label>
       </div>
 
       <!-- Password input -->
       <div class="form-outline mb-4">
-        <input type="password" id="loginPassword" class="form-control" />
+        <input v-model="body.password" type="password" id="loginPassword" class="form-control" />
         <label class="form-label" for="loginPassword">Password</label>
       </div>
       <div class="form-outline mb-4">
-        <input type="password" id="loginPassword" class="form-control" />
-        <label class="form-label" for="loginPassword">Repeat Password</label>
+        <input v-model="passwordRepeat" type="password" id="loginPassword2" class="form-control" />
+        <label class="form-label" for="loginPassword2">Repeat Password</label>
       </div>
 
       <!-- Submit button -->
-      <button type="submit" class="btn btn-primary btn-block mb-4">Register</button>
+      <button @click.prevent="registerUser" class="btn btn-primary btn-block mb-4">Register</button>
 
       <!-- Register buttons -->
       <div class="text-center">
@@ -31,3 +31,35 @@
     </form>
     </div>
 </template>
+
+
+<script>
+import { register } from '@/middleware/axios.js'
+
+export default {
+  data() {
+    return {
+      body: {
+        email: null,
+        password: null,
+      },
+      passwordRepeat: null
+    }
+  },
+  methods: {
+    async registerUser() 
+    {
+      try {
+        if (this.body.password === this.passwordRepeat)
+        {
+          let response = await register(this.body)
+          this.$store.token = response.token
+          localStorage.setItem('token', this.$store.token);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }
+}
+</script>

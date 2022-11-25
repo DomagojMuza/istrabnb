@@ -1,6 +1,6 @@
 <template>
       <div class="details-wrapper" v-if="object">
-            <div class="d-flex pt-5 position-relative">
+            <div class="d-flex pt-lg-5 position-relative">
                   <div v-if="images.length > 0" :id="id" class="carousel slide" data-bs-interval="false" data-bs-ride="carousel">
                         <div class="carousel-inner">
                               <div :key="index" v-for="(img, index) in images" :class="{ 'active carousel-item' : index == 0, 'carousel-item': index} ">
@@ -23,15 +23,15 @@
                                           <h1 class="fw-bold my-2 mx-5 my-3">{{ object.name }}</h1>
                                           <div class="d-flex align-items-end">
              
-                                                <div class="h2 lead mx-3 my-3">Price starting from </div>
-                                                <div class=" h1 me-5 mt-3 mb-2">{{ object.price }} €</div>
+                                                <div class="h2 lead mx-3 my-3">{{ object.price ? 'Price starting from' : 'Not available' }} </div>
+                                                <div class=" h1 me-5 mt-3 mb-2">{{ object.price ? object.price + ' €' : '' }}</div>
                                           </div>
                                     </div>
                               </div>
                         </div>
                   </div>
             </div>
-            <div class="container info p-5 rounded" style="min-height: 400px;">
+            <div class="container info rounded" style="min-height: 400px;">
                   <div>
                         <div class="row py-4 py-lg-0 ">
                         <div class="col-12 col-lg">
@@ -63,9 +63,25 @@
                         </GMapMarker>
                   </GMapMap>
 
-                  <div class="d-flex justify-content-end mt-5">
+                  <div class="row my-5">
+                        <div class="col-4"><input class="form-control" v-model="dateFrom" type="date" name="dateFrom" placeholder="Date from"></div>
+                        <div class="col-4"><input class="form-control" v-model="dateTo" type="date" name="dateTo" placeholder="Date to"></div>
+                        <div class="col-4 " @click="calc()">
+                              <button class="btn btn-primary">
+                                    Calculate
+                              </button>
+                        </div>
+                  </div>
+                  <div v-if="calcData.total" class="row">
+                        <div class="col-12 h2">
+                              <span>Available {{calcData.days}} days, from {{calcData.dateFrom}} - {{calcData.dateTo}}.</span>
+                              Total <b>{{calcData.total}} €</b>
+                        </div>
+                  </div>
+
+                  <div class="d-flex justify-content-end mb-5">
                         <a href="tel:+496170961709" style="text-decoration: none;">
-                              <button class="btn btn-primary px-4 py-3 rounded">Get an Offer</button>
+                              <button class="btn btn-primary px-4 py-3 rounded">Send request</button>
                         </a>
                   </div>
             </div>
@@ -73,7 +89,7 @@
 </template>
 
 <script>
-import {objectDetails} from '@/middleware/axios.js';
+import {objectDetails, calculatePrice} from '@/middleware/axios.js';
 
 export default {
 
@@ -83,7 +99,15 @@ export default {
                   center: {},
                   object: null,
                   id: 'detailsSlider',
-                  data_bs: '#detailsSlider'
+                  data_bs: '#detailsSlider',
+                  dateFrom: null,
+                  dateTo: null,
+                  calcData : {
+                        total: null,
+                        total: null,
+                        dateFrom: null,
+                        dateFrom: null
+                  }
 
             }
       },
@@ -91,7 +115,10 @@ export default {
 
             let response = await objectDetails(this.$route.params._id);
             this.object = response.data;
-            console.log(this.object);
+            let smallestPrice = this.object.pricelist.reduce( function(prev, curr) {
+                  return prev.price < curr.price ? prev : curr;
+            }, 0);
+            this.object.price = smallestPrice.price;
             this.center = {
                   lat: this.object.location.coordinates[1],
                   lng: this.object.location.coordinates[0],
@@ -101,7 +128,26 @@ export default {
                         this.images.push(url);
             })
 
-      }
+      },
+      methods: {
+            async calc() 
+            {
+                  let data = {dateFrom: this.dateFrom, dateTo: this.dateTo, object_id: this.object._id };
+                  try {
+                        let res = await calculatePrice(data);
+                        console.log(res);
+                        if (res)
+                        {
+                              this.calcData.total = res.data.total;
+                              this.calcData.days = res.data.days;
+                              this.calcData.dateFrom = res.data.period.bookDateFrom;
+                              this.calcData.dateTo = res.data.period.bookDateTo;
+                        }
+                  } catch (error) {
+                        console.log(error);
+                  }
+            }
+      },
     }
 </script>
 
@@ -131,5 +177,6 @@ export default {
 
       .details-wrapper{
             background-color: whitesmoke;
+            min-height: 100vh;
       }
 </style>

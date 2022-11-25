@@ -25,6 +25,7 @@
             }
       },
       created() {
+            console.log(this.object.images);
             if(this.object.images)
             {
                   let rand = Math.floor(Math.random() * 10000000) + 1;
